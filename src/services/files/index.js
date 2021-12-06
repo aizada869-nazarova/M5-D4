@@ -54,4 +54,11 @@ filesRouter.post(
   }
 );
 
+const cloudStorage= new CloudinaryStorage({
+  cloudinary,
+  params:{
+    folder: "aizada-strive"
+  }
+})
+
 export default filesRouter;
