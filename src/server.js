@@ -29,7 +29,27 @@ const loggerMiddleware2 = (req, res, next) => {
   next(); // mandatory to give the control to what is happening next
 };
 // server.use(express.static(publicFolderPath));
-server.use(cors());
+
+
+const whiteList = [process.env.FE_LOCAL_URL, process.env.FE_REMOTE_URL]
+
+const corsOptions = {
+  origin: function (origin, next) {
+    // since CORS is a GLOBAL middleware, it is going to be executed for each and every request --> we are going to be able to determine the origin of each and every request we are receiving
+    console.log("ORIGIN: ", origin)
+
+    if (!origin || whiteList.indexOf(origin) !== -1) {
+      // if origin is included in the whitelist --> OK
+      next(null, true)
+    } else {
+      // If origin is NOT in the whitelist --> trigger a CORS error
+      next(new Error("CORS ERROR!"))
+    }
+  },
+}
+
+server.use(cors(corsOptions))
+
 server.use(express.json());
 // server.use(loggerMiddleware); // GLOBAL MIDDLEWARE
 server.use("/author", authorsRouter);
