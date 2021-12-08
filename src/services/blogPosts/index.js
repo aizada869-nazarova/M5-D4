@@ -6,6 +6,8 @@ import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 import { validationResult } from "express-validator";
 import postValidation from "./postValidation.js";
+import { getBlogPDFReadeableSt } from "../../lib/pdf-tools.js"
+import { getBlogReadableStream } from "../../lib/fs-tools.js"
 
 const blogPostsRouter = express.Router();
 
@@ -91,6 +93,25 @@ blogPostsRouter.delete("/:id", (req, res, next) => {
     const remainingPosts = posts.filter((post) => post._id !== req.params.id);
     writeBlogPosts(remainingPosts);
     res.status(204).send();
+  } catch (error) {
+    next(error);
+  }
+});
+
+
+blogPostsRouter.get("/:id/pdf", postValidation, (req, res, next) => {
+  try {
+    const posts = getBlogPostArray();
+    const post = posts.find((post) => post.id === req.params.id);
+    if (post) {
+      res.send(post);
+    } else {
+      next(createError(404, "this is an error , your problem fix it."));
+    }
+    const source = getBlogPDFReadeableSt(post);
+    res.setHeader("Content-Type", "attachment; filename=whatever.pdf");
+    source.pipe(res);
+    source.end();
   } catch (error) {
     next(error);
   }

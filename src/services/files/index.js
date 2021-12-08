@@ -4,8 +4,7 @@ import createError from "http-errors";
 import { writeAuthorImage } from "../../lib/fs-tools.js";
 import {v2 as cloudinary} from "cloudinary"
 import {CloudinaryStorage} from "multer-storage-cloudinary"
-import { getBlogPDFReadeableSt } from "../../lib/pdf-tools.js"
-import { getBlogReadableStream } from "../../lib/fs-tools.js"
+
 const filesRouter = express.Router();
 
 // 1. SINGLE UPLOAD
@@ -70,5 +69,18 @@ filesRouter.post("/uploadCloudinary", multer({ storage: cloudStorage }).single("
     next(error)
   }
 })
+
+// filesRouter.get("/downloadPDF", (req, res, next) => {
+//   try {
+//     res.setHeader("Content-Disposition", "attachment; filename=whatever.pdf") // This header tells the browser to open the "Save file on disk" dialog
+//     const source = getPDFReadableStream({ firstName: "Bogdan", lastName: "Birau" })
+//     const destination = res
+//     pipeline(source, destination, err => {
+//       if (err) next(err)
+//     })
+//   } catch (error) {
+//     next(error)
+//   }
+// })
 
 export default filesRouter;
