@@ -44,7 +44,7 @@ server.use(cors(corsOptions))
 server.use(express.json());
 // server.use(loggerMiddleware); // GLOBAL MIDDLEWARE
 server.use("/author", authorsRouter);
-server.use("/blog", loggerMiddleware2, blogPostsRouter);
+server.use("/blog/", loggerMiddleware2, blogPostsRouter);
 server.use("/blog/comments", commentsRouter);
 // *************************** ERROR MIDDLEWARES ***************************
 

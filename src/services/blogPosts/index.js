@@ -8,6 +8,7 @@ import { validationResult } from "express-validator";
 import postValidation from "./postValidation.js";
 import { getBlogPDFReadeableSt } from "../../lib/pdf-tools.js"
 import { getBlogReadableStream } from "../../lib/fs-tools.js"
+import { pipeline } from "stream";
 
 const blogPostsRouter = express.Router();
 
@@ -55,11 +56,11 @@ blogPostsRouter.post("/", (req, res, next) => {
   try {
     const errors = validationResult(req);
     if (errors.isEmpty()) {
-      const newPost = { ...req.body, _id: uniqid(), createdAt: new Date() };
+      const newPost = { ...req.body, id: uniqid(), createdAt: new Date() };
       const posts = getBlogPostArray();
       posts.push(newPost);
       writeBlogPosts(posts);
-      res.status(201).send({ _id: newPost._id });
+      res.status(201).send({ id: newPost.id });
     } else {
       next(createError(400, { errorsList: errors }));
     }
@@ -72,7 +73,7 @@ blogPostsRouter.post("/", (req, res, next) => {
 blogPostsRouter.put("/:id", (req, res, next) => {
   try {
     const posts = getBlogPostArray();
-    const remainingPosts = posts.filter((post) => post._id !== req.params.id);
+    const remainingPosts = posts.filter((post) => post.id !== req.params.id);
     const modifiedPost = {
       ...req.body,
       id: req.params.postId,
@@ -90,7 +91,7 @@ blogPostsRouter.put("/:id", (req, res, next) => {
 blogPostsRouter.delete("/:id", (req, res, next) => {
   try {
     const posts = getBlogPostArray();
-    const remainingPosts = posts.filter((post) => post._id !== req.params.id);
+    const remainingPosts = posts.filter((post) => post.id !== req.params.id);
     writeBlogPosts(remainingPosts);
     res.status(204).send();
   } catch (error) {
@@ -102,18 +103,24 @@ blogPostsRouter.delete("/:id", (req, res, next) => {
 blogPostsRouter.get("/:id/pdf", postValidation, (req, res, next) => {
   try {
     const posts = getBlogPostArray();
-    const post = posts.find((post) => post.id === req.params.id);
+    const post = posts.find((post) => post._id === req.params.id);
     if (post) {
-      res.send(post);
+      const source = getBlogPDFReadeableSt(post);
+     // res.setHeader("Content-Disposition", "attachment; filename=blog.pdf");
+      res.setHeader("Content-Type", "application/pdf");
+      pipeline(source, res, (err) => {
+        if (err) {
+          next(createError(400, "pdf"))
+        }
+      })
+
+      source.end()
     } else {
-      next(createError(404, "this is an error , your problem fix it."));
+      next(createError(404, "this is an error , you have a problem fix it."));
     }
-    const source = getBlogPDFReadeableSt(post);
-    res.setHeader("Content-Type", "attachment; filename=whatever.pdf");
-    source.pipe(res);
-    source.end();
+
   } catch (error) {
-    next(error);
+    next(createError(400, "pdf"));
   }
 });
 export default blogPostsRouter;
