@@ -37,7 +37,7 @@ blogPostsRouter.get("/", (req, res, next) => {
 blogPostsRouter.get("/:id", postValidation, (req, res, next) => {
   try {
     const posts = getBlogPostArray();
-    const post = posts.find((post) => post._id === req.params.id);
+    const post = posts.find((post) => post.id === req.params.id);
     if (post) {
       res.send(post);
     } else {

@@ -35,3 +35,6 @@ export const writeCoverPicture = async (fileName, content) =>
   await writeFile(join(blogPostsJSONpath, fileName), content);
 export const writeAuthorImage = async (filename, content) =>
   await writeFile(join(authorsPublicFolderPath, filename), content);
+
+  export const getBlogReadableStream = () => createReadStream(blogPostsJSONpath)
+

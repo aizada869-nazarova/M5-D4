@@ -1,10 +1,11 @@
 import express from "express";
 import multer from "multer";
 import createError from "http-errors";
-import { writeUsersPicture } from "../../lib/fs-tools.js";
+import { writeAuthorImage } from "../../lib/fs-tools.js";
 import {v2 as cloudinary} from "cloudinary"
 import {CloudinaryStorage} from "multer-storage-cloudinary"
-
+import { getBlogPDFReadeableSt } from "../../lib/pdf-tools.js"
+import { getBlogReadableStream } from "../../lib/fs-tools.js"
 const filesRouter = express.Router();
 
 // 1. SINGLE UPLOAD
@@ -24,7 +25,7 @@ filesRouter.post(
     try {
       console.log(req.file);
 
-      await writeUsersPicture(req.file.originalname, req.file.buffer);
+      await writeAuthorImage(req.file.originalname, req.file.buffer);
       res.send("Image uploaded!");
     } catch (error) {
       next(error);
@@ -43,7 +44,7 @@ filesRouter.post(
       console.log("REQ. FILES: ", req.files);
 
       const arrayOfPromises = req.files.map((file) =>
-        writeUsersPicture(file.originalname, file.buffer)
+        writeAuthorImage(file.originalname, file.buffer)
       );
 
       await Promise.all(arrayOfPromises);
@@ -58,6 +59,15 @@ const cloudStorage= new CloudinaryStorage({
   cloudinary,
   params:{
     folder: "aizada-strive"
+  }
+})
+
+filesRouter.post("/uploadCloudinary", multer({ storage: cloudStorage }).single("profilePic"), async (req, res, next) => {
+  try {
+    console.log(req.file)
+    res.send("Image uploaded on Cloudinary!")
+  } catch (error) {
+    next(error)
   }
 })
 
