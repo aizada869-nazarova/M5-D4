@@ -46,6 +46,8 @@ server.use(express.json());
 server.use("/author", authorsRouter);
 server.use("/blog/", loggerMiddleware2, blogPostsRouter);
 server.use("/blog/comments", commentsRouter);
+server.use("/files", filesRouter)
+
 // *************************** ERROR MIDDLEWARES ***************************
 
 server.use(notFoundErrorHandler);

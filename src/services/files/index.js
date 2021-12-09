@@ -1,7 +1,7 @@
 import express from "express";
 import multer from "multer";
 import createError from "http-errors";
-import { writeAuthorImage } from "../../lib/fs-tools.js";
+import { writeAuthorImage, getAuthorsReadableStream } from "../../lib/fs-tools.js";
 import {v2 as cloudinary} from "cloudinary"
 import {CloudinaryStorage} from "multer-storage-cloudinary"
 import json2csv from "json2csv"
