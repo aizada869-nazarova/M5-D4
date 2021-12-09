@@ -3,7 +3,7 @@ import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 import { dir } from "console";
 
-const { readJSON, writeJSON } = fs;
+const { readJSON, writeJSON, createReadStream } = fs;
 
 const authorsJSONpath = join(
   dirname(fileURLToPath(import.meta.url)),

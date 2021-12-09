@@ -1,6 +1,7 @@
 import express from "express";
 import multer from "multer";
 import createError from "http-errors";
+import { pipeline } from "stream"
 import { writeAuthorImage, getAuthorsReadableStream } from "../../lib/fs-tools.js";
 import {v2 as cloudinary} from "cloudinary"
 import {CloudinaryStorage} from "multer-storage-cloudinary"
@@ -87,7 +88,7 @@ filesRouter.post("/uploadCloudinary", multer({ storage: cloudStorage }).single("
 filesRouter.get("/downloadCSV", (req, res, next) => {
   try {
     res.setHeader("Content-Disposition", "attachment; filename=authors.csv")
-
+    
     const source = getAuthorsReadableStream()
     const transform = new json2csv.Transform({ fields: ["name", "surname"] })
     const destination = res
