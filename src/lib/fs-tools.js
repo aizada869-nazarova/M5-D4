@@ -26,7 +26,7 @@ export const getAuthors = async () => await readJSON(authorsJSONpath);
 export const getBlogPosts = async () => await readJSON(blogPostsJSONpath);
 export const getComments = async () => await readJSON(commentsJSONpath);
 export const writeAuthors = async (content) =>
-  await writeJSON(authorJSONspath, content);
+  await writeJSON(authorsJSONpath, content);
 export const writeBlogPosts = async (content) =>
   await writeJSON(blogPostsJSONpath, content);
 export const getCurrentFolderPath = async (currentFile) =>
@@ -37,4 +37,6 @@ export const writeAuthorImage = async (filename, content) =>
   await writeFile(join(authorsPublicFolderPath, filename), content);
 
   export const getBlogReadableStream = () => createReadStream(blogPostsJSONpath)
+  export const getAuthorsReadableStream = () => createReadStream(authorsJSONpath)
+
 
